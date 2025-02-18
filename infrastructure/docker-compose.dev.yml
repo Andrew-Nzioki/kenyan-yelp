@@ -2,11 +2,12 @@ services:
   postgres:
     build: ./postgres
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:3.32.0
     ports:

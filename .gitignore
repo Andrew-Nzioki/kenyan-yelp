@@ -1,2 +1,30 @@
+# Environment variables
 .env
+
+# Binaries and temp files
+/bin
+/tmp
+*.exe
+*.test
+*.out
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Swagger generated files
 /docs
+
+# Air temporary files
+tmp/
+
+# Docker volumes
+postgres_data/
+azurite_data/
+
+# Go specific
+*.test
+*.out
+/vendor/
