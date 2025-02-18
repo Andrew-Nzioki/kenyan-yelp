@@ -1,3 +1,7 @@
+package business
+
+import "time"
+
 type BusinessEntity struct {
     ID          string    `db:"id"`
     Name        string    `db:"name"`
