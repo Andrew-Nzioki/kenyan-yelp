@@ -1,4 +1,4 @@
-# KENYA-YELP
+# KENYAN-YELP
 - Core User Functionality (mvp)
 
     1. Users can register and create profiles
