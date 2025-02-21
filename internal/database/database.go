@@ -13,6 +13,10 @@ type DB struct {
 	*sql.DB
 }
 
+func (db *DB) GetDB() *sql.DB {
+    return db.DB
+}
+
 func Connect(databaseURL string) (*DB, error) {
 	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {

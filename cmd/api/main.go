@@ -13,6 +13,7 @@ import (
 	"github.com/Andrew-Nzioki/kenyan-yelp/internal/config"
 	"github.com/Andrew-Nzioki/kenyan-yelp/internal/database"
 	"github.com/Andrew-Nzioki/kenyan-yelp/internal/server"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -29,33 +30,33 @@ func main() {
         gin.SetMode(gin.ReleaseMode)
     }
 
-    cfg, err := config.Load()
+    configuration, err := config.LoadEvironmentVariables()
     if err != nil {
         log.Fatalf("Failed to load configuration: %v", err)
     }
 
-    db, err := database.Connect(cfg.DatabaseURL)
+    db, err := database.Connect(configuration.DatabaseURL)
     if err != nil {
         log.Fatalf("Failed to connect to database: %v", err)
     }
     defer db.Close()
 
-    router := server.NewGinRouter(cfg, db)
+    router := server.NewGinRouter(configuration, db.GetDB())
     
     // Swagger docs
     docs.SwaggerInfo.BasePath = "/api/v1"
     router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
     srv := &http.Server{
-        Addr:         cfg.ServerAddr,
+        Addr:         configuration.ServerAddress,
         Handler:      router,
-        ReadTimeout:  cfg.ReadTimeout,
-        WriteTimeout: cfg.WriteTimeout,
+        ReadTimeout:  configuration.ReadTimeout,
+        WriteTimeout: configuration.WriteTimeout,
         IdleTimeout:  time.Minute,
     }
 
     go func() {
-        log.Printf("Starting server on %s", cfg.ServerAddr)
+        log.Printf("Starting server on %s", configuration.ServerAddress)
         if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
             log.Fatalf("Server failed: %v", err)
         }

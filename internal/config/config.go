@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	ServerAddr    string
+	ServerAddress    string
 	ReadTimeout   time.Duration
 	WriteTimeout  time.Duration
 	DatabaseURL   string
@@ -17,14 +17,14 @@ type Config struct {
 	JWTExpiration time.Duration
 }
 
-func Load() (*Config, error) {
-	// Load .env file if it exists
+func LoadEvironmentVariables() (*Config, error) {
+
 	if err := godotenv.Load(); err != nil {
 		fmt.Printf("Warning: .env file not found: %v\n", err)
 	}
 
-	cfg := &Config{
-		ServerAddr:    getEnvOrDefault("SERVER_ADDR", ":8080"),
+	configuration := &Config{
+		ServerAddress:    getEnvOrDefault("SERVER_ADDR", ":8080"),
 		ReadTimeout:   getDurationOrDefault("READ_TIMEOUT", 15*time.Second),
 		WriteTimeout:  getDurationOrDefault("WRITE_TIMEOUT", 15*time.Second),
 		DatabaseURL:   os.Getenv("DATABASE_URL"),
@@ -32,12 +32,15 @@ func Load() (*Config, error) {
 		JWTExpiration: getDurationOrDefault("JWT_EXPIRATION", 24*time.Hour),
 	}
 
-	// Validate required fields
-	if cfg.DatabaseURL == "" {
+	if configuration.DatabaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
-	}
+	}else if configuration.JWTSecret == "" {
+		return nil, fmt.Errorf("JWT_SECRET is required")
+	}else if configuration.JWTExpiration == 0 {
+		return nil, fmt.Errorf("JWT_EXPIRATION is required")
 
-	return cfg, nil
+	}
+	return configuration, nil
 }
 
 func getEnvOrDefault(key, defaultValue string) string {

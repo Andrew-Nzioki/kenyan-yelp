@@ -1,27 +1,32 @@
 package server
 
 import (
+	"database/sql"
+
+	"github.com/Andrew-Nzioki/kenyan-yelp/internal/business"
+	"github.com/Andrew-Nzioki/kenyan-yelp/internal/business/repository"
 	"github.com/Andrew-Nzioki/kenyan-yelp/internal/config"
-	"github.com/Andrew-Nzioki/kenyan-yelp/internal/database"
-	"github.com/Andrew-Nzioki/kenyan-yelp/internal/handlers"
+
 	"github.com/gin-gonic/gin"
 )
 
-func NewGinRouter(cfg *config.Config, db *database.DB) *gin.Engine {
-    router := gin.New()
+// internal/server/router.go
+func NewGinRouter(cfg *config.Config, db *sql.DB) *gin.Engine {
+    router := gin.Default()
 
-    // Middleware
-    router.Use(gin.Logger())
-    router.Use(gin.Recovery())
+    // Initialize your dependencies
+    businessRepo := repository.NewPostgresRepository(db)
+    businessService := business.NewService(businessRepo)
+    businessHandler := business.NewHandler(businessService)
 
-    // Health check
-   
     // API routes
-    api := router.Group("/api/v1")
+    v1 := router.Group("/api/v1")
     {
-        api.GET("/test", handlers.TestHandler)
-		api.GET("/health", handlers.HealthCheck)
-
+        businesses := v1.Group("/businesses")
+        {
+            businesses.POST("", businessHandler.CreateBusiness)
+            // Add other routes...
+        }
     }
 
     return router

@@ -1,0 +1,9 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "internal/business/repository/sql/queries.sql"
+    schema: "internal/business/repository/sql/schema.sql"
+    gen:
+      go:
+        package: "repository"
+        out: "internal/business/repository"
